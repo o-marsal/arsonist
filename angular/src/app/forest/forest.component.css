@@ -1,0 +1,17 @@
+#forest-grid-table {
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* For portait and landscape definition, see ForestComponent.computeTableOrientationClass() */
+
+.table-landscape {
+    width: 90vw;
+    aspect-ratio: var(--aspectRatio, "1");
+}
+
+.table-portrait {
+    height: 80vh;
+    aspect-ratio: var(--aspectRatio, "1");
+}

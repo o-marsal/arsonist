@@ -1,0 +1,16 @@
+<div class="main">
+  <div id="header">
+    <span id="title">Arsonist: the fire forest simulation</span>
+  </div>
+  <div id="content">
+    <forest [model]="model" />
+    <div id="button-bar">
+      <button id="start-button" type="button"
+        (click)="onStartButtonClick()"
+        [disabled]="model.state == 'RUNNING'"
+      >Start simulation</button>
+    </div>
+  </div>
+</div>
+
+<router-outlet />

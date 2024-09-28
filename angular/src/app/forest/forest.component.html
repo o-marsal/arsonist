@@ -1,0 +1,17 @@
+<div id="forest-panel">
+    <div id="forest-grid-panel">
+        <table id="forest-grid-table" class="{{ tableOrientationClass }}" [style.--aspectRatio]="aspectRatio">
+            <tbody>
+            @for (row of rows; track row) {
+                <tr class="forest-grid-row">
+                @for (cell of row; track cell) {
+                    <td class="forest-grid-cell">
+                        <tree [model]="cell" />
+                    </td>
+                }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

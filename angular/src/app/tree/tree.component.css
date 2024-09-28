@@ -1,0 +1,16 @@
+.tree {
+    aspect-ratio: 1;
+    border-radius: 4px;
+}
+
+.tree-alive {
+    background-color: #9dff9d;
+}
+
+.tree-burning {
+    background-color: #ff9c9c;
+}
+
+.tree-burned {
+    background-color: #999;
+}
