@@ -4,7 +4,7 @@
             <tbody>
             @for (row of rows; track row) {
                 <tr class="forest-grid-row">
-                @for (cell of row; track cell) {
+                @for (cell of row.str; track cell) {
                     <td class="forest-grid-cell">
                         <tree [model]="cell" />
                     </td>

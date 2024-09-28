@@ -66,7 +66,7 @@ public class SimulationService {
                 onTimerTick();
             }
         };
-        timer.scheduleAtFixedRate(timerTask, 0, settings.getStepDurationMs());
+        timer.scheduleAtFixedRate(timerTask, 50, settings.getStepDurationMs());
     }
 
     /**

@@ -1,24 +1,24 @@
 # Project
 This project is an technical exercise test.  
 See:
-- the exercice instruction in doc/test_technique.md
-- the specification in doc/specification.md
+- the exercice instruction in [doc/test_technique.md](https://github.com/o-marsal/arsonist/blob/master/doc/test_technique.md)
+- my specification in [doc/specification.md](https://github.com/o-marsal/arsonist/blob/master/doc/specification.md)
 
 # Quick Execution
 
-1. Download the jar file release/arsonist-0.0.1.jar
-2. Execute the jar:
+1. Download the jar file [release/arsonist-0.0.1.jar](https://github.com/o-marsal/arsonist/blob/master/release/arsonist-0.0.1.jar)
+
+2. Execute the jar (requires java 17)
 ```
 java -jar arsonist-0.0.1.jar
 ```
-3. Open your browser at [http://localhost:8080](http://localhost:8080)
 
-This requires java 17.
+3. Open your browser at [http://localhost:8080](http://localhost:8080)
 
 
 # Compilation
 
-## Requirement
+## Requirements
 
 A docker container is provided, for build and run.  
 Docker is the easiest way, the container contains all the requirements.  

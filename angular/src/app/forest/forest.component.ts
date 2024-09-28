@@ -20,11 +20,11 @@ export class ForestComponent {
 
   window: Window | null;
 
-  rows : string[] = [];
+  rows: any[] = [];
 
-  tableOrientationClass : string = "";
+  tableOrientationClass: string = "";
 
-  aspectRatio = "1";
+  aspectRatio: string = "1";
 
 
   //---------------------------------------------------------------------------
@@ -40,29 +40,35 @@ export class ForestComponent {
   // Events
   //---------------------------------------------------------------------------
 
-  // Angular event
-  ngOnInit() {
-    this.computeTableOrientationClass();
-  }
-
   // Angular event: the model is changed
   ngOnChanges() {
-    this.rows = [];
-    let idx = 0;
-    let row : string = "";
-    for (let y=0 ; y<this.model.height ; y++) {
-      row = this.model.grid.substring(idx, idx+this.model.width);
-      this.rows[y] = row;
-      idx += this.model.width;
+    try {
+      let model = this.model; // copy model, to always use the same instance
+      let rows: any[] = []; // don't build this.rows directly, or angular will render rows in a inconsistent state
+      let row: any = {};
+      let idx = 0;
+      for (let y=0 ; y<model.height ; y++) {
+        row = {
+          id: y,
+          str: model.grid.substring(idx, idx+model.width)
+        };
+        rows[y] = row;
+        idx += model.width;
+      }
+
+      // Assign variables
+      this.aspectRatio = model.width + "/" + model.height;
+      this.tableOrientationClass = this.computeTableOrientationClass(model.width, model.height);
+      this.rows = rows;
+    } catch(e) {
+      console.error(e);
     }
-    this.aspectRatio = this.model.width + "/" + this.model.height;
-    this.computeTableOrientationClass();
   }
 
   // DOM event: the window viewport is resied
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
-    this.computeTableOrientationClass();
+    this.tableOrientationClass = this.computeTableOrientationClass(this.model.width, this.model.height);
   }
 
 
@@ -71,23 +77,23 @@ export class ForestComponent {
   //---------------------------------------------------------------------------
 
   /**
-   * Compute the fields modelRatio and tableOrientationClass.
-   * - modelRatio is the ratio from model (width / height), given as a constraint for the grid.
-   * - tableOrientationClass contains the css class to use, to choose the display layout:
-   *   Landscape means full width, and the height is calculated from the width and modelRatio.
-   *   Portrait means full height, and the width is calculated from the height and modelRatio.
+   * Compute the field tableOrientationClass.
+   * It contains the css class to use, to choose the display layout:
+   * Landscape means full width, and the height is calculated from the width and aspectRatio.
+   * Portrait means full height, and the width is calculated from the height and aspectRatio.
    */
-  computeTableOrientationClass() {
+  computeTableOrientationClass(width: number, height: number): string {
     if (this.window) {
-      let modelRatio = (this.model.width * 1.0) / (this.model.height * 1.0);
-      let tableHeightIfLandscape = 0.9 * this.window.innerWidth / modelRatio;
+      let aspectRatio = (width * 1.0) / (height * 1.0);
+      let tableHeightIfLandscape = 0.9 * this.window.innerWidth / aspectRatio;
       let tableHeightIfPortrait = 0.8 * this.window.innerHeight;
       if (tableHeightIfLandscape < tableHeightIfPortrait) {  
-        this.tableOrientationClass = "table-landscape";
+        return "table-landscape";
       } else {
-        this.tableOrientationClass = "table-portrait";
+        return "table-portrait";
       }
     }
+    return "";
   }
 
 }

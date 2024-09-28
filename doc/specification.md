@@ -20,7 +20,6 @@ Choix possibles:
 - machine virtuel
 
 => le backend étant Java, qui est portable, l'approche stand-alone semble à privilégier.
-=> pour éviter les problèmes de version de java, créer aussi un conteneur docker d'exécution.
 
 
 ### Compilation (build)

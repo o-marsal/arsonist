@@ -14,7 +14,8 @@ import { AppComponent } from './app.component';
 export class AppService {
 
   appComponent: AppComponent | null;
-  stateTimerActive: boolean;
+  getStateRunning: boolean;
+  stateTimerId: any;
 
 
   //---------------------------------------------------------------------------
@@ -23,7 +24,8 @@ export class AppService {
 
   constructor(private http: HttpClient) {
     this.appComponent = null;
-    this.stateTimerActive = false;
+    this.getStateRunning = false;
+    this.stateTimerId = null;
   }
 
 
@@ -37,10 +39,12 @@ export class AppService {
    * @param appComponent 
    */
   startStateTimer(appComponent: AppComponent) {
+    console.log("startStateTimer");
     this.appComponent = appComponent;
-    if (!this.stateTimerActive) {
-      this.stateTimerActive = true;
-      setTimeout(this.onStateTimerTick.bind(this), 0);
+    if (!this.stateTimerId) {
+      // Check every 100ms if a new getState should be asked.
+      // Do not use a recursive call of setTimeout (infinite stack call => memory crash).
+      this.stateTimerId = setInterval(this.onStateTimerTick.bind(this), 100);
     }
   }
 
@@ -48,7 +52,11 @@ export class AppService {
    * Stop the long-polling timer of the state Model.
    */
   stopStateTimer() {
-    this.stateTimerActive = false;    
+    console.log("stopStateTimer");
+    if (this.stateTimerId) {
+      clearInterval(this.stateTimerId);
+      this.stateTimerId = null;
+    }
   }
 
 
@@ -58,17 +66,12 @@ export class AppService {
 
   // Internal event: from the timer
   onStateTimerTick() {
+    if (!this.stateTimerId) return;
+    if (this.getStateRunning) return;
     try {
       this.callGetState();
     } catch(e) {
       console.error("error calling callGetState", e);
-    }
-  }
-
-  // Internal event: from callGetState
-  onCallGetStateDone() {
-    if (this.stateTimerActive) {
-      setTimeout(this.onStateTimerTick.bind(this), 1000);
     }
   }
 
@@ -99,6 +102,7 @@ export class AppService {
   callGetState() {
     if (!this.appComponent) return; // should never happen
     const appService = this;
+    this.getStateRunning = true;
 
     // Build parameters
     let model = this.appComponent.getModel();
@@ -111,15 +115,18 @@ export class AppService {
 
     // Exec http query
     this.http.get<Model>("/state", options).subscribe(model => {
-      if (model) {
-        console.log("Calling /state : Success");
-        if (this.appComponent) {
-          this.appComponent.onModelUpdated(model);
+      try {
+        if (model) {
+          console.log("Calling /state : Success");
+          if (this.appComponent) {
+            this.appComponent.onModelUpdated(model);
+          }
+        } else {
+          console.log("Calling /state : empty model (long polling timeout)");
         }
-      } else {
-        console.log("Calling /state : empty model (long polling timeout)");
+      } finally {
+        this.getStateRunning = false;
       }
-      appService.onCallGetStateDone();
     });
   }
 
