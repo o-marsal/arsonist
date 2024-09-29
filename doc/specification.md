@@ -1,6 +1,6 @@
 # Spécifications
 
-Ce document permet de lister les choix possibles, lister les avantages inconvénients, et faire les choix.
+Ce document permet de lister les choix possibles, lister les avantages inconvénients, et faire les choix.  
 L'énoncé étant rédigé en français, cette spécification l'est également.
 
 
@@ -13,7 +13,7 @@ Vu qu'on met le feu à une forêt (virtuellement), j'ai choisi `arsonist` (pyrom
 
 ### Exécution (runtime)
 
-L'environnement d'exécution n'est pas précisé.
+L'environnement d'exécution n'est pas précisé.  
 Choix possibles:
 - application portable "stand-alone" (ne pas avoir à installer des applications tierces)
 - docker
@@ -24,22 +24,22 @@ Choix possibles:
 
 ### Compilation (build)
 
-L'environnement de développement n'est pas précisé.
+L'environnement de développement n'est pas précisé.  
 Mais il peut être intéressant que le projet puisse être recompilé, quelque soit la station de travail.
 
-=> le backend étant en java, privilégier maven (ou graddle).
-=> le frontend est généralement géré par npm
-=> pour gérer maven et npm, le plus simple est d'utiliser un Makefile.
+=> le backend étant en java, privilégier maven (ou graddle).  
+=> le frontend est généralement géré par npm.  
+=> pour gérer maven et npm, le plus simple est d'utiliser un Makefile.  
 => pour éviter les problèmes de version des outils (java, maven, npm, make), utiliser un docker de build.
 
 
 ## Technologies
 
-Compte tenu de l'énoncé, la solution la plus simple serait de faire une simple page html, embarquant le css et javascript.
-Mais il n'y aurait alors ni backend, ni API REST, ni fichier de configuration, cela serait hors sujet.
+Compte tenu de l'énoncé, la solution la plus simple serait de faire une simple page html, embarquant le css et javascript.  
+Mais il n'y aurait alors ni backend, ni API REST, ni fichier de configuration, cela serait hors sujet.  
 > Java pour le backend, JavaScript pour le frontend, et API Rest, avec ou sans framefork
 
-L'utilisation de backend + frontend ici est plutôt "pédagogique".
+L'utilisation de backend + frontend ici est plutôt "pédagogique".  
 Ce n'est pas le meilleur choix pour la simplicité (maintenance), performance, coûts...
 
 
@@ -51,7 +51,7 @@ Choix possible:
 - Application web "servlet": nécessite un serveur web déjà installé
 - Application java classique, avec une lib serveur serveur http
 
-Privilégier une version stand-alone pour simplifier l'exécution, et la démonstration.
+Privilégier une version stand-alone pour simplifier l'exécution, et la démonstration.  
 La modularité des composants OSGi n'est pas utile ici, et Sprint Boot est plus populaire que Wisdom.
 
 => choix de Spring Boot
@@ -64,7 +64,7 @@ Choix possible:
 - SPA (Single Page Application): Angular / React / Vue...
 - Template: Thymeleaf, Mustache...
 
-Au vu de l'exercice demandé, il n'y a pas besoin d'utiliser un framework.
+Au vu de l'exercice demandé, il n'y a pas besoin d'utiliser un framework.  
 Le choix le plus simple serait de faire du natif html / css / javascript.
 
 Mais l'offre d'emploi étant sur du Angular ou Vue, il peut être intéressant de les utiliser.
@@ -74,7 +74,7 @@ Mais l'offre d'emploi étant sur du Angular ou Vue, il peut être intéressant d
 
 ## Architecture
 
-Un premier choix est de savoir si le traitement de la simulation se fait côté frontend ou backend.
+Un premier choix est de savoir si le traitement de la simulation se fait côté frontend ou backend.  
 Le plus simple serait de tout faire côté frontend, ce serait le plus performant, le moins coûteux en requêtes.
 
 Mais l'énoncé précise "API Rest".
@@ -86,7 +86,7 @@ A noter que ce choix implique une différence dans un contexte multi-utilisateur
 - si la simulation tourne côté backend, plusieurs utilisateurs peuvent voir la même simulation.
 - si la simulation tourne côté frontend, chaque utilisateur aura sa propre simulation.
 
-Le choix le plus pédagogique serait de faire la simulation côté backend, pour qu'on ait plusieurs appels web-service.
+Le choix le plus pédagogique serait de faire la simulation côté backend, pour qu'on ait plusieurs appels web-service.  
 Ce n'est pas le choix le plus simple, performant, moins couteux.
 
 => simulation côté backend
@@ -95,16 +95,16 @@ Ce n'est pas le choix le plus simple, performant, moins couteux.
 Cela signifie que:
 - le fichier de configuration sera chargé côté backend
 - la simulation étant côté backend, il enverra alors l'état (modèle) au frontend
-- le frontend est passif, il se contente d'afficher l'état (modèle) qui reçoit du serveur
+- le frontend est passif, il se contente d'afficher l'état (modèle) qu'il reçoit du backend
 
 
 ### Modèle de données
 
 #### Format
 
-La solution la plus simple et la plus courante est d'utiliser le format json, qui semble bien adapté ici.
-Ce n'est pas la plus optimisé, mais semble bien adapté à l'exercice.
-Une solution plus optimisé serait d'avoir un autre format plus "compacte" pour minimiser la taille des requêtes.
+La solution la plus simple et la plus courante est d'utiliser le format json, qui semble bien adapté ici.  
+Ce n'est pas la plus optimisée, mais semble bien adaptée à l'exercice.  
+Une solution plus optimisée serait d'avoir un autre format plus "compacte" pour minimiser la taille des requêtes.
 
 => choix du format json
 
@@ -115,14 +115,14 @@ Informations à transmettre:
 - `state` : enum STOPPED | RUNNING, état de la simulation
 - `width` : entier, largeur en nombre de cases
 - `height`: entier, hauteur en nombre de cases
-- `time`  : entier long, timestamp java (ms) de l'état, temps horloge serveur
-- `step`  : entier, numéro de l'étape de simulation (utile pour le debug)
-- `grid`  : string de taille <width> x <height>, où chaque caractère représente une case.
+- `time`  : entier long, timestamp java (ms) de l'état, temps basé sur l'horloge du backend
+- `step`  : entier, numéro de l'étape de la simulation (utile pour le debug)
+- `grid`  : string de taille `width` x `height`, représentant la forêt, où chaque caractère représente une case contenant un arbre.
 
 Une case est représenté par un caractère:
-- "T" : case avec un arbre (Tree) sain
-- "*" : case avec un arbre en feu
-- "X" : case avec un arbre brûlé
+- `T` : case avec un arbre (Tree) sain
+- `*` : case avec un arbre en feu
+- `X` : case avec un arbre brûlé
 
 Example:
 ```json
@@ -138,8 +138,8 @@ Example:
 
 ### Communication
 
-Puisqu'il est demandé d'utiliser des API Rest, cela signifie que la communication se fera par "polling".
-A noter que le plus simple et plus efficace aurait été d'ouvrir une web-socket, où le serveur peut pousser directement les données.
+Puisqu'il est demandé d'utiliser des API Rest, cela signifie que la communication se fera par "polling".  
+A noter que le plus simple et plus efficace aurait été d'ouvrir une web-socket, où le serveur peut pousser directement les données.  
 Un compromis classique est donc de faire du long polling, pour conserver la réactivité de l'interface.
 
 => choix du long polling
@@ -147,10 +147,10 @@ Un compromis classique est donc de faire du long polling, pour conserver la réa
 Il faut aussi prévoir un bouton "démarer la simulation", qui sera aussi un "endpoint" web-service.
 
 
-#### GET /state?time=<time>
+#### GET /state?time={time}
 
-Returne l'état en cours du serveur.
-Si le paramètre `time` est donné (optionnel), il s'agit de l'horodate du modèle connu par le client
+Returne l'état en cours du serveur.  
+Si le paramètre `time` est donné (optionnel), il s'agit de l'horodate du modèle connu par le client.
 - si le serveur a un état plus récent, il le retourne directement
 - sinon, le serveur attend (long polling) une mise à jour de l'état
 
@@ -195,4 +195,5 @@ GET  /start
 ALREADY_RUNNING
 ```
 
-Note: le `200 OK` ici précise que la requête HTTP s'est bien passé, c'est indépendant du résultat la commande start.
+Note: le `200 OK` ici précise que la requête HTTP s'est bien passé, c'est indépendant du résultat de la commande start.  
+Un code HTTP d'erreur aurait pu aussi être utilisé, comme 409 CONFLICT, mais c'est moins précis qu'un "ALREADY_RUNNING".

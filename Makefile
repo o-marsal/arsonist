@@ -11,6 +11,7 @@ help:
 
 .PHONY: frontend
 frontend:
+	cd angular && npm install
 	cd angular && ng build --configuration development
 	cp -r angular/dist/angular/browser/* src/main/resources/static/
 
